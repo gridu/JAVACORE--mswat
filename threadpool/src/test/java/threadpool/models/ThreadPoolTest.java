@@ -1,61 +1,47 @@
 package threadpool.models;
 
-import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InOrder;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.Thread.sleep;
+import static org.mockito.Mockito.mock;
+
 
 public class ThreadPoolTest {
-    class FakeJob {
-        void testCall(String s) {}
+    private class FakeJob {
+        void testCall(String s) {
+        }
     }
 
-    private final static long IRRELEVANT_TASK_DELAY = 0;
+    private final static long SINGLE_TEST_TIMEOUT_IN_MILLISECONDS = 1000;
+    private final static long IRRELEVANT_TASK_DELAY = 5;
 
-    @Mock
-    FakeJob fakeJob;
-
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-    @Test(timeout = 100)
+    @Test(timeout = SINGLE_TEST_TIMEOUT_IN_MILLISECONDS)
     public void shouldProcessAllJobs() {
+        FakeJob fakeJob = mock(FakeJob.class);
         ThreadPool threadPool = new ThreadPool(2);
         ArrayList<String> tasksNames = new ArrayList<>(List.of("A", "B", "C"));
         tasksNames.forEach(name -> threadPool.submitTask(() -> fakeJob.testCall(name), IRRELEVANT_TASK_DELAY));
 
         threadPool.startProcessing();
-        try {
-            sleep(50);
-        } catch (InterruptedException e) {
-            Assert.fail();
-        }
+        threadPool.waitForJobs();
         threadPool.endProcessing();
 
         tasksNames.forEach(name -> Mockito.verify(fakeJob).testCall(name));
     }
 
-    @Test(timeout = 100)
+    @Test(timeout = SINGLE_TEST_TIMEOUT_IN_MILLISECONDS)
     public void shouldProcessDelayedJobInOrderWhenNotOverloaded() {
+        FakeJob fakeJob = mock(FakeJob.class);
         ThreadPool threadPool = new ThreadPool(2);
         threadPool.submitTask(() -> fakeJob.testCall("A"), 20);
         threadPool.submitTask(() -> fakeJob.testCall("B"), 5);
 
         threadPool.startProcessing();
-        try {
-            sleep(50);
-        } catch (InterruptedException e) {
-            Assert.fail();
-        }
+        threadPool.waitForJobs();
         threadPool.endProcessing();
 
         InOrder order = Mockito.inOrder(fakeJob);
@@ -63,7 +49,7 @@ public class ThreadPoolTest {
         order.verify(fakeJob).testCall("A");
     }
 
-    @Test(timeout = 100)
+    @Test(timeout = SINGLE_TEST_TIMEOUT_IN_MILLISECONDS)
     public void shouldNotFailWhenStartedWithEmptyJobQueue() {
         ThreadPool threadPool = new ThreadPool(2);
 
@@ -71,19 +57,15 @@ public class ThreadPoolTest {
         threadPool.endProcessing();
     }
 
-    @Test(timeout = 100)
+    @Test(timeout = SINGLE_TEST_TIMEOUT_IN_MILLISECONDS)
     public void shouldProcessJobsScheduledDuringProcessing() {
+        FakeJob fakeJob = mock(FakeJob.class);
         ThreadPool threadPool = new ThreadPool(2);
         ArrayList<String> tasksNames = new ArrayList<>(List.of("A", "B", "C"));
-
-        threadPool.startProcessing();
         tasksNames.forEach(name -> threadPool.submitTask(() -> fakeJob.testCall(name), IRRELEVANT_TASK_DELAY));
 
-        try {
-            sleep(50);
-        } catch (InterruptedException e) {
-            Assert.fail();
-        }
+        threadPool.startProcessing();
+        threadPool.waitForJobs();
         threadPool.endProcessing();
 
         tasksNames.forEach(name -> Mockito.verify(fakeJob).testCall(name));
