@@ -1,4 +1,4 @@
-name := "spark-final-project"
+name := "JAVACORE--mswat"
 
 version := "0.1"
 
