@@ -72,12 +72,11 @@ object Warehouse {
     SparkSession
       .builder()
       .appName("Warehouse")
-      .master("local")
       .getOrCreate()
 
   def main(args: Array[String]): Unit = {
     spark.sparkContext.setLogLevel("ERROR")
-    
+
     val warehouse = new Warehouse(spark)
     val numOfRowsToShow = 30
     val warehouseDf = warehouse.readWarehouseData("/scala_code/src/main/resources/warehouse/in.csv")
