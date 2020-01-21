@@ -77,8 +77,8 @@ object Warehouse {
   def main(args: Array[String]): Unit = {
     val warehouse = new Warehouse(spark)
     val numOfRowsToShow = 30
-    val warehouseDf = warehouse.readWarehouseData("src/main/resources/warehouse/in.csv")
-    val amountsDf = warehouse.readAmountsData("src/main/resources/warehouse/amounts.csv")
+    val warehouseDf = warehouse.readWarehouseData("/scala_code/src/main/resources/warehouse/in.csv")
+    val amountsDf = warehouse.readAmountsData("/scala_code/src/main/resources/warehouse/amounts.csv")
     val currentAmounts = warehouse.getCurrentAmountsByPosition(amountsDf)
     warehouse.getCurrentAmountsByWarehouseAndProduct(currentAmounts, warehouseDf).show(numOfRowsToShow)
     warehouse.getAmountStatsByWarehouseAndProduct(amountsDf, warehouseDf).show(numOfRowsToShow)
