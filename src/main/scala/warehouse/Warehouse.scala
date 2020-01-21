@@ -1,5 +1,6 @@
 package warehouse
 
+import org.apache.log4j.lf5.LogLevel
 import org.apache.spark.sql.catalyst.ScalaReflection
 import org.apache.spark.sql.functions.{avg, max, min}
 import org.apache.spark.sql.types.{DecimalType, StructType}
@@ -75,6 +76,8 @@ object Warehouse {
       .getOrCreate()
 
   def main(args: Array[String]): Unit = {
+    spark.sparkContext.setLogLevel("ERROR")
+    
     val warehouse = new Warehouse(spark)
     val numOfRowsToShow = 30
     val warehouseDf = warehouse.readWarehouseData("/scala_code/src/main/resources/warehouse/in.csv")
@@ -85,7 +88,7 @@ object Warehouse {
 
     finalAmounts.show(numOfRowsToShow)
     finalStats.show(numOfRowsToShow)
-    
+
     spark.close()
   }
 }
