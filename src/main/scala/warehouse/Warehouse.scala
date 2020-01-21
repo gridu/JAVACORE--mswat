@@ -80,8 +80,11 @@ object Warehouse {
     val warehouseDf = warehouse.readWarehouseData("/scala_code/src/main/resources/warehouse/in.csv")
     val amountsDf = warehouse.readAmountsData("/scala_code/src/main/resources/warehouse/amounts.csv")
     val currentAmounts = warehouse.getCurrentAmountsByPosition(amountsDf)
-    warehouse.getCurrentAmountsByWarehouseAndProduct(currentAmounts, warehouseDf).show(numOfRowsToShow)
-    warehouse.getAmountStatsByWarehouseAndProduct(amountsDf, warehouseDf).show(numOfRowsToShow)
+    val finalAmounts =  warehouse.getCurrentAmountsByWarehouseAndProduct(currentAmounts, warehouseDf)
+    val finalStats = warehouse.getAmountStatsByWarehouseAndProduct(amountsDf, warehouseDf)
     spark.close()
+
+    finalAmounts.show(numOfRowsToShow)
+    finalStats.show(numOfRowsToShow)
   }
 }

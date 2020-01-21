@@ -3,6 +3,7 @@ The task is to find simple stats from csv input files:
 - Find max, min, avg amounts for each warehouse and product.
 
 Spark setup is done with docker. Running following command will start spark cluster (sparm master and single worker)
+WARNING: during the very first run it will fetch docker images from the web - it can take some time and depends on your internet connection speed.
 ```console
 > docker-compose up -d
 ```
