@@ -82,9 +82,10 @@ object Warehouse {
     val currentAmounts = warehouse.getCurrentAmountsByPosition(amountsDf)
     val finalAmounts =  warehouse.getCurrentAmountsByWarehouseAndProduct(currentAmounts, warehouseDf)
     val finalStats = warehouse.getAmountStatsByWarehouseAndProduct(amountsDf, warehouseDf)
-    spark.close()
 
     finalAmounts.show(numOfRowsToShow)
     finalStats.show(numOfRowsToShow)
+    
+    spark.close()
   }
 }
